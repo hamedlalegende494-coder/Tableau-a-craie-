@@ -320,12 +320,12 @@ input, textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 30px;
 }
 
 #header-logo {
-  width: 100px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
   object-fit: contain;
   border-radius: 8px;
   background: #f5f3e7;
@@ -393,8 +393,8 @@ input, textarea {
     { id: "seconde", label: "2nde", group: "Lycée" },
     { id: "premiere", label: "1ère", group: "Lycée" },
     { id: "terminale", label: "Terminale D", group: "Lycée" },
-    { id: "terminale", label: "Terminale A", group: "Lycée" },
-    { id: "terminale", label: "Terminale C", group: "Lycée" },
+    { id: "terminale 1", label: "Terminale A", group: "Lycée" },
+    { id: "terminale 2", label: "Terminale C", group: "Lycée" },
   ];
   var GROUPS = ["Primaire", "Collège", "Lycée"];
   var LEVELS_PER_GROUP = {
@@ -408,7 +408,7 @@ input, textarea {
   // Mot de passe pour accéder à l'ajout de questions.
   // Pour le changer : remplace le texte entre guillemets ci-dessous,
   // enregistre le fichier, puis remets-le en ligne sur GitHub.
-  var ADMIN_PASSWORD = "Craie2026";
+  var ADMIN_PASSWORD = "05112001";
 
   function classGroup(classId) {
     var c = CLASSES.filter(function (x) {
