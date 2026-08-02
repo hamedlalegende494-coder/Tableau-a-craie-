@@ -1010,14 +1010,14 @@ input, textarea {
     return (
       '<div class="home-wrap">' +
       '<p class="chalk-text" style="font-size:18px;margin-bottom:20px;">' +
-      "Un tableau noir, de la craie, et tes propres exercices de maths — de la première année " +
+      "devez plus fort en maths en participants aux exercices — de la première année " +
       "du primaire jusqu'à la Terminale." +
       "</p>" +
       '<input class="choice-input" id="player-name" style="max-width:280px;margin:0 auto 24px;display:block;text-align:center;" ' +
-      'placeholder="Ton prénom (pour le classement)" value="' + escapeHtml(getPlayerName()) + '" />' +
+      'placeholder=" Ente Ton prénom " value="' + escapeHtml(getPlayerName()) + '" />' +
       '<div class="home-buttons">' +
       '<button class="big-chalk-btn" data-action="go-play-class">🎓 <span>Jouer</span></button>' +
-      '<button class="big-chalk-btn blue" data-action="go-admin-login">🔒 <span>Ajouter des questions</span></button>' +
+      '<button class="big-chalk-btn blue" data-action="go-admin-login">🔒 <span>questions privé</span></button>' +
       "</div>" +
       "</div>"
     );
@@ -1030,7 +1030,7 @@ input, textarea {
       '<div class="top-bar-label">Espace administrateur</div>' +
       "</div>" +
       '<div class="form-card" style="max-width:360px;margin:10px auto;">' +
-      '<p class="chalk-text" style="margin-top:0;">Entre le mot de passe pour ajouter ou modifier des questions.</p>' +
+      '<p class="chalk-text" style="margin-top:0;">privé.</p>' +
       '<input class="choice-input" id="admin-password" type="password" placeholder="Mot de passe" autocomplete="current-password" />' +
       (state.loginError ? '<div class="form-error">' + escapeHtml(state.loginError) + "</div>" : "") +
       '<button class="chalk-btn" style="margin-top:14px;width:100%;justify-content:center;" data-action="admin-login-submit">Entrer</button>' +
@@ -1049,7 +1049,7 @@ input, textarea {
     if (mode === "admin") {
       html +=
         '<div class="form-card" style="margin-bottom:18px;">' +
-        '<p class="chalk-text-muted" style="margin-top:0;">Pour que <b style="color:#f5f3e7;">tout le monde</b> voie tes questions ' +
+        '<p class="chalk-text-muted" style="margin-top:0;">mise à<b style="color:#f5f3e7;"> des questions</b> ' +
         "(pas seulement cet appareil), exporte-les puis mets à jour le fichier " +
         '<code>questions.json</code> sur GitHub.</p>' +
         '<button class="chalk-btn-ghost" data-action="export-questions">📤 Exporter les questions (questions.json)</button>' +
@@ -1088,7 +1088,7 @@ input, textarea {
       "</div>";
     if (mode === "play") {
       html +=
-        '<p class="chalk-text-muted" style="margin-top:-6px;margin-bottom:14px;">⏱ ' +
+        '<p class="chalk-text-muted" style="margin-top:-6px;margin-bottom:14px;">⏳ ' +
         getTimeForClass(state.selClass) +
         " secondes par question pour cette classe</p>";
     }
@@ -1202,7 +1202,7 @@ input, textarea {
         (state.submitted ? " disabled" : "") +
         " />";
       if (!state.submitted) {
-        html += '<p class="chalk-text-muted" style="font-size:12px;margin:8px 0 0;">La réponse est corrigée à la fin du chrono (ou appuie sur Entrée pour valider maintenant).</p>';
+        html += '<p class="chalk-text-muted" style="font-size:12px;margin:8px 0 0;">La réponse est corrigée à la fin du chrono.</p>';
       }
     }
 
