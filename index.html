@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Tableau à Craie - Maths CP1 à Terminale</title>
+
+  <meta name="description" content="Jeux de maths du CP1 à la Terminale avec tes propres questions" />
+  <meta name="theme-color" content="#16301f" />
+
+  <!-- PWA / installation -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Craie Maths" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap');
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at 20% 10%, #234a35 0%, #12271b 55%, #0d1f15 100%);
+  font-family: 'Nunito', sans-serif;
+}
+
+body {
+  padding: 24px 12px;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+
+button {
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+}
+
+input, textarea {
+  font-family: 'Nunito', sans-serif;
+}
+
+::placeholder { color: #a9bfae; }
+
+.spin { animation: spin 1s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.fade-in { animation: fadeIn 0.25s ease; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin, .fade-in { animation: none !important; }
+}
+
+#frame {
+  max-width: 720px;
+  margin: 0 auto;
+  border: 10px solid #6b4423;
+  border-radius: 10px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+  background: linear-gradient(180deg, #1c3a28, #16301f);
+  overflow: hidden;
+}
+
+#header {
+  position: relative;
+  padding: 22px 24px 16px;
+  border-bottom: 2px dashed rgba(245,243,231,0.25);
+  text-align: center;
+}
+
+#sound-toggle {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: rgba(245,243,231,0.08);
+  border: 1px solid rgba(245,243,231,0.3);
+  color: #f5f3e7;
+  border-radius: 8px;
+  width: 38px;
+  height: 38px;
+  font-size: 17px;
+  z-index: 2;
+}
+
+#header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(1px 1px at 10% 30%, rgba(255,255,255,0.15), transparent),
+    radial-gradient(1px 1px at 80% 60%, rgba(255,255,255,0.12), transparent),
+    radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.1), transparent);
+  pointer-events: none;
+}
+
+.title-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.loure-logo {
+  width: 96px;
+  height: 96px;
+  border-radius: 14px;
+  background: #fff;
+  padding: 3px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+}
+
+#app-title {
+  font-family: 'Kalam', cursive;
+  color: #f5f3e7;
+  font-size: 32px;
+  margin: 0;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+
+#app-subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  color: #7ec8e3;
+  font-size: 13px;
+  margin-top: 6px;
+  letter-spacing: 1px;
+  text-align: left;
+}
+
+#board {
+  padding: 22px 22px 30px;
+  min-height: 380px;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px 6px;
+}
+
+.home-wrap { text-align: center; padding: 10px 4px 4px; }
+.home-buttons { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+
+.chalk-text { color: #f5f3e7; line-height: 1.5; }
+.chalk-text-muted { color: #a9bfae; }
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #7ec8e3;
+  text-decoration: underline;
+  font-size: 12px;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+}
+
+.big-chalk-btn {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 20px;
+  background: transparent;
+  border: 2px solid #f4d35e;
+  border-radius: 8px;
+  color: #f5f3e7;
+  font-family: 'Kalam', cursive;
+  font-size: 20px;
+  transition: transform 0.15s, background 0.15s;
+}
+.big-chalk-btn:active { transform: scale(0.97); }
+.big-chalk-btn.blue { border-color: #7ec8e3; }
+
+.top-bar { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: transparent; border: 1px solid rgba(245,243,231,0.4);
+  color: #f5f3e7; border-radius: 6px; padding: 6px 10px; font-size: 14px;
+}
+.top-bar-label { color: #f5f3e7; font-family: 'Kalam', cursive; font-size: 18px; }
+
+.group-label {
+  color: #7ec8e3;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.class-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; }
+.class-card {
+  background: rgba(245,243,231,0.06);
+  border: 1px solid rgba(245,243,231,0.3);
+  border-radius: 8px;
+  color: #f5f3e7;
+  padding: 14px 8px;
+  font-family: 'Kalam', cursive;
+  font-size: 16px;
+}
+.class-card:active { background: rgba(245,243,231,0.15); }
+
+.level-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+.level-card {
+  background: rgba(245,243,231,0.06);
+  border: 1px solid rgba(245,243,231,0.3);
+  border-radius: 8px;
+  color: #f5f3e7;
+  padding: 16px 10px;
+  text-align: center;
+}
+.level-stars { display: flex; justify-content: center; gap: 2px; margin-bottom: 6px; }
+.level-title { font-family: 'Kalam', cursive; font-size: 18px; }
+.level-count { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #a9bfae; margin-top: 4px; }
+.level-warn { font-size: 11px; color: #ff8f8f; margin-top: 6px; }
+.level-locked { opacity: 0.55; }
+.level-lock-icon { font-size: 22px; margin-bottom: 6px; }
+
+.quiz-meta {
+  display: flex; justify-content: space-between; color: #a9bfae;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; margin-bottom: 10px;
+}
+
+.timer-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.timer-bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(245,243,231,0.15);
+  overflow: hidden;
+}
+.timer-bar-fill {
+  height: 100%;
+  background: #f4d35e;
+  transition: width 1s linear, background 0.3s;
+}
+.timer-value {
+  font-family: 'JetBrains Mono', monospace;
+  color: #f5f3e7;
+  font-size: 13px;
+  min-width: 42px;
+  text-align: right;
+}
+
+.question-card {
+  background: rgba(245,243,231,0.05);
+  border: 1px solid rgba(245,243,231,0.25);
+  border-radius: 10px;
+  padding: 20px;
+}
+.question-text { color: #f5f3e7; font-family: 'Kalam', cursive; font-size: 22px; line-height: 1.4; margin-bottom: 18px; }
+
+.choice-list { display: flex; flex-direction: column; gap: 10px; }
+.choice-btn {
+  text-align: left;
+  background: rgba(245,243,231,0.06);
+  border: 1px solid rgba(245,243,231,0.3);
+  border-radius: 8px;
+  color: #f5f3e7;
+  padding: 12px 14px;
+  font-size: 16px;
+}
+.choice-btn.selected { border-color: #f4d35e; background: rgba(244,211,94,0.12); }
+.choice-btn.correct { border-color: #8fd694; background: rgba(143,214,148,0.18); }
+.choice-btn.wrong { border-color: #ff8f8f; background: rgba(255,143,143,0.18); }
+.choice-btn:disabled { opacity: 1; }
+
+.text-input, .choice-input, .textarea-field {
+  width: 100%;
+  background: rgba(245,243,231,0.08);
+  border: 1px solid rgba(245,243,231,0.35);
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: #f5f3e7;
+  font-size: 16px;
+}
+
+.feedback { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-weight: 700; }
+.feedback.ok { color: #8fd694; }
+.feedback.ko { color: #ff8f8f; }
+
+.chalk-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; border: 2px solid #f5f3e7; color: #f5f3e7;
+  border-radius: 8px; padding: 10px 18px; font-family: 'Kalam', cursive; font-size: 17px;
+}
+.chalk-btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; border: 1px solid rgba(245,243,231,0.4); color: #f5f3e7;
+  border-radius: 8px; padding: 10px 18px; font-size: 14px;
+}
+
+.score-big { font-family: 'JetBrains Mono', monospace; font-size: 40px; color: #f4d35e; font-weight: 700; }
+
+.form-card {
+  background: rgba(245,243,231,0.05);
+  border: 1px solid rgba(245,243,231,0.25);
+  border-radius: 10px;
+  padding: 18px;
+}
+.type-toggle { display: flex; gap: 8px; margin-bottom: 12px; }
+.type-btn {
+  flex: 1; background: transparent; border: 1px solid rgba(245,243,231,0.35);
+  color: #f5f3e7; border-radius: 6px; padding: 8px 10px; font-size: 14px;
+}
+.type-btn.active { border-color: #f4d35e; background: rgba(244,211,94,0.15); }
+
+.choice-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.choice-row input[type="radio"] { accent-color: #f4d35e; width: 18px; height: 18px; }
+
+.form-error { color: #ff8f8f; font-size: 13px; margin-top: 8px; }
+
+.q-row {
+  display: flex; align-items: flex-start; gap: 10px; padding: 10px 0;
+  border-bottom: 1px dashed rgba(245,243,231,0.2);
+}
+.q-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #12271b;
+  background: #7ec8e3; border-radius: 4px; padding: 2px 6px; margin-right: 8px;
+}
+.q-row-text { color: #f5f3e7; font-size: 14px; }
+.q-row-answer { color: #a9bfae; font-size: 12px; margin-top: 3px; }
+.trash-btn {
+  background: transparent; border: 1px solid rgba(255,143,143,0.5); color: #ff8f8f;
+  border-radius: 6px; padding: 6px 8px;
+}
+
+.icon-star { color: #f4d35e; }
+
+#footer {
+  border-top: 2px dashed rgba(245,243,231,0.25);
+  padding: 14px 22px 18px;
+  text-align: center;
+}
+#footer p {
+  margin: 3px 0;
+  color: #a9bfae;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+}
+#footer p:first-child {
+  color: #f4d35e;
+  font-family: 'Kalam', cursive;
+  font-size: 15px;
+  letter-spacing: normal;
+}
+
+</style>
+</head>
+<body>
+  <div id="page">
+    <div id="frame">
+      <div id="header">
+        <button id="sound-toggle" title="Activer/couper le son">🔊</button>
+        <div class="title-row">
+          <img src="logo-loure-service.png" alt="Louré Service" class="loure-logo" />
+          <div>
+            <h1 id="app-title">Tableau à Craie</h1>
+            <p id="app-subtitle">Maths · CP1 → Terminale</p>
+          </div>
+        </div>
+      </div>
+      <div id="board"></div>
+      <div id="footer">
+        <p>Louré service disponible pour tout vos créations site web et application.</p>
+        <p>WhatsApp : 50-43-41-54</p>
+        <p>Numéro de téléphone : 54-54-58-18 / 01-03-05-76</p>
+      </div>
+    </div>
+  </div>
+
+  <audio id="bg-music" src="musique-fond.mp3" loop preload="auto"></audio>
+
+  <script>
+(function () {
+  "use strict";
+
+  var CLASSES = [
+    { id: "cp1", label: "CP1", group: "Primaire" },
+    { id: "cp2", label: "CP2", group: "Primaire" },
+    { id: "ce1", label: "CE1", group: "Primaire" },
+    { id: "ce2", label: "CE2", group: "Primaire" },
+    { id: "cm1", label: "CM1", group: "Primaire" },
+    { id: "cm2", label: "CM2", group: "Primaire" },
+    { id: "sixieme", label: "6ème", group: "Collège" },
+    { id: "cinquieme", label: "5ème", group: "Collège" },
+    { id: "quatrieme", label: "4ème", group: "Collège" },
+    { id: "troisieme", label: "3ème", group: "Collège" },
+    { id: "seconde", label: "2nde", group: "Lycée" },
+    { id: "premiere", label: "1ère", group: "Lycée" },
+    { id: "terminaleA", label: "Terminale A", group: "Lycée" },
+    { id: "terminaleD", label: "Terminale D", group: "Lycée" },
+    { id: "terminaleC", label: "Terminale C", group: "Lycée" },
+  ];
+  var GROUPS = ["Primaire", "Collège", "Lycée"];
+  var LEVELS_PER_GROUP = {
+    "Primaire": 5,
+    "Collège": 10,
+    "Lycée": 10,
+  };
+  var MAX_Q = 20;
+  var STORAGE_KEY = "craie-maths-data";
+
+  // Mot de passe pour accéder à l'ajout de questions.
+  // Pour le changer : remplace le texte entre guillemets ci-dessous,
+  // enregistre le fichier, puis remets-le en ligne sur GitHub.
+  var ADMIN_PASSWORD = "Hamed05";
+
+  function classGroup(classId) {
+    var c = CLASSES.filter(function (x) {
+      return x.id === classId;
+    })[0];
+    return c ? c.group : "Primaire";
+  }
+
+  function getLevelsForClass(classId) {
+    var n = LEVELS_PER_GROUP[classGroup(classId)] || 5;
+    var arr = [];
+    for (var i = 1; i <= n; i++) arr.push(i);
+    return arr;
+  }
+
+  function emptyData() {
+    var d = {};
+    CLASSES.forEach(function (c) {
+      d[c.id] = {};
+      getLevelsForClass(c.id).forEach(function (l) {
+        d[c.id][l] = [];
+      });
+    });
+    return d;
+  }
+
+  function seedData() {
+    var d = emptyData();
+    d.cp1[1] = [
+      { id: "seed1", type: "qcm", text: "Combien font 2 + 3 ?", choices: ["4", "5", "6", "3"], answer: "5" },
+      { id: "seed2", type: "qcm", text: "Combien font 4 + 1 ?", choices: ["6", "5", "4", "3"], answer: "5" },
+    ];
+    d.terminaleC[1] = [{ id: "seed3", type: "libre", text: "Quelle est la dérivée de x² ?", answer: "2x" }];
+    return d;
+  }
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i];
+      a[i] = a[j];
+      a[j] = tmp;
+    }
+    return a;
+  }
+
+  function normalize(s) {
+    return String(s).trim().toLowerCase().replace(/\s+/g, "").replace(",", ".");
+  }
+
+  function isCorrectAnswer(question, userValue) {
+    if (question.type === "qcm") return userValue === question.answer;
+    var u = normalize(userValue);
+    var a = normalize(question.answer);
+    if (u === a) return true;
+    var uf = parseFloat(u);
+    var af = parseFloat(a);
+    if (!isNaN(uf) && !isNaN(af)) return Math.abs(uf - af) < 1e-9;
+    return false;
+  }
+
+  function classLabel(id) {
+    var c = CLASSES.filter(function (x) {
+      return x.id === id;
+    })[0];
+    return c ? c.label : id;
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // ---------------------------------------------------------------------
+  // Sons (générés, sans fichier audio : fonctionnent hors-ligne)
+  // ---------------------------------------------------------------------
+  var audioCtx = null;
+  function getAudioCtx() {
+    if (!audioCtx) {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (Ctx) audioCtx = new Ctx();
+    }
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    return audioCtx;
+  }
+
+  function isSoundOn() {
+    return state.soundOn !== false;
+  }
+
+  function speak(text) {
+    if (!isSoundOn()) return;
+    if (!("speechSynthesis" in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = "fr-FR";
+      u.rate = 1;
+      u.pitch = 1;
+      window.speechSynthesis.speak(u);
+    } catch (e) {
+      console.error("Voix indisponible", e);
+    }
+  }
+
+  function playTone(freqs, opts) {
+    if (!isSoundOn()) return;
+    var ctx = getAudioCtx();
+    if (!ctx) return;
+    opts = opts || {};
+    var noteDur = opts.noteDur || 0.16;
+    var type = opts.type || "sine";
+    var gainVal = opts.gain || 0.18;
+    var t = ctx.currentTime;
+    freqs.forEach(function (f) {
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.value = f;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.linearRampToValueAtTime(gainVal, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + noteDur);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + noteDur + 0.02);
+      t += noteDur * 0.85;
+    });
+  }
+
+  function playCorrectSound() {
+    playTone([523.25, 659.25, 783.99], { noteDur: 0.14, type: "triangle", gain: 0.2 });
+    speak("Bonne réponse !");
+  }
+
+  function playWrongSound() {
+    playTone([392, 311.13], { noteDur: 0.22, type: "sawtooth", gain: 0.15 });
+    speak("Mauvaise réponse !");
+  }
+
+  function playApplause() {
+    if (!isSoundOn()) return;
+    var ctx = getAudioCtx();
+    if (ctx) {
+      var duration = 1.6;
+      var bufferSize = ctx.sampleRate * duration;
+      var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      var data = buffer.getChannelData(0);
+      // Bruit blanc modulé par des rafales aléatoires pour imiter des applaudissements
+      for (var i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.5;
+      }
+      var clapTimes = [];
+      var nClaps = 22;
+      for (var c = 0; c < nClaps; c++) {
+        clapTimes.push(Math.random() * (duration - 0.1));
+      }
+      var envelope = new Float32Array(bufferSize);
+      clapTimes.forEach(function (ct) {
+        var start = Math.floor(ct * ctx.sampleRate);
+        var len = Math.floor(0.03 * ctx.sampleRate);
+        for (var j = 0; j < len && start + j < bufferSize; j++) {
+          var e = Math.exp(-j / (len * 0.25));
+          envelope[start + j] = Math.max(envelope[start + j], e);
+        }
+      });
+      for (var k = 0; k < bufferSize; k++) {
+        data[k] *= envelope[k];
+      }
+
+      var src = ctx.createBufferSource();
+      src.buffer = buffer;
+      var filter = ctx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.value = 2200;
+      filter.Q.value = 0.7;
+      var gain = ctx.createGain();
+      gain.gain.value = 0.9;
+      src.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      src.start();
+    }
+    speak("Bravo ! Niveau réussi sans faute !");
+  }
+
+  // ---------------------------------------------------------------------
+  // Musique de fond (fichier audio fourni : "Che Che Kule", en boucle pendant le quiz)
+  // ---------------------------------------------------------------------
+  var bgMusicEl = null;
+  function getMusicEl() {
+    if (!bgMusicEl) bgMusicEl = document.getElementById("bg-music");
+    return bgMusicEl;
+  }
+
+  function startBackgroundMusic() {
+    if (!isSoundOn()) return;
+    var el = getMusicEl();
+    if (!el) return;
+    el.volume = 0.45;
+    el.currentTime = 0;
+    var p = el.play();
+    if (p && p.catch) p.catch(function (e) { console.error("Lecture musique impossible", e); });
+  }
+
+  function stopBackgroundMusic() {
+    var el = getMusicEl();
+    if (!el) return;
+    el.pause();
+    el.currentTime = 0;
+  }
+
+  // ---------------------------------------------------------------------
+  // State
+  // ---------------------------------------------------------------------
+  var state = {
+    data: null,
+    screen: "home",
+    selClass: null,
+    selLevel: null,
+    quizQs: [],
+    idx: 0,
+    score: 0,
+    choiceOrderCache: {},
+    selectedChoice: null,
+    submitted: false,
+    wasCorrect: false,
+    qType: "qcm",
+    correctIdx: 0,
+    formError: "",
+    isAdminAuthed: false,
+    loginError: "",
+    soundOn: true,
+    pendingAdminScreen: "admin-class",
+    timeLeft: 20,
+    maxTime: 20,
+    timerInterval: null,
+    timedOut: false,
+    scores: {},
+  };
+
+  // ---------------------------------------------------------------------
+  // Chronomètre par question (le temps dépend du groupe de la classe)
+  // ---------------------------------------------------------------------
+  var GROUP_TIME = {
+    "Primaire": 20,
+    "Collège": 45,
+    "Lycée": 60,
+  };
+
+  function getTimeForClass(classId) {
+    return GROUP_TIME[classGroup(classId)] || 20;
+  }
+
+  function clearQuestionTimer() {
+    if (state.timerInterval) {
+      clearInterval(state.timerInterval);
+      state.timerInterval = null;
+    }
+  }
+
+  // Minuteur de "fin de frappe" pour valider automatiquement une réponse
+  // libre sans que le joueur ait besoin d'appuyer sur "Valider".
+  var quizAutoTimer = null;
+  var QUIZ_AUTO_DELAY = 900;
+  function clearQuizAutoTimer() {
+    if (quizAutoTimer) {
+      clearTimeout(quizAutoTimer);
+      quizAutoTimer = null;
+    }
+  }
+
+  // Minuteur qui passe automatiquement à la question suivante après avoir
+  // affiché la correction, sans que le joueur ait besoin de cliquer.
+  var autoNextTimer = null;
+  var AUTO_NEXT_DELAY = 1800;
+  function clearAutoNextTimer() {
+    if (autoNextTimer) {
+      clearTimeout(autoNextTimer);
+      autoNextTimer = null;
+    }
+  }
+  function scheduleAutoNext() {
+    clearAutoNextTimer();
+    autoNextTimer = setTimeout(function () {
+      nextQuestion();
+    }, AUTO_NEXT_DELAY);
+  }
+
+  function updateTimerDisplay() {
+    var valEl = document.getElementById("timer-value");
+    if (valEl) valEl.textContent = state.timeLeft;
+    var fillEl = document.getElementById("timer-bar-fill");
+    if (fillEl) {
+      var pct = Math.max(0, (state.timeLeft / state.maxTime) * 100);
+      fillEl.style.width = pct + "%";
+      fillEl.style.background = state.timeLeft <= 5 ? "#ff8f8f" : "#f4d35e";
+    }
+  }
+
+  function startQuestionTimer() {
+    clearQuestionTimer();
+    state.maxTime = getTimeForClass(state.selClass);
+    state.timeLeft = state.maxTime;
+    state.timedOut = false;
+    updateTimerDisplay();
+    state.timerInterval = setInterval(function () {
+      state.timeLeft -= 1;
+      updateTimerDisplay();
+      if (state.timeLeft <= 0) {
+        clearQuestionTimer();
+        handleTimeUp();
+      }
+    }, 1000);
+  }
+
+  function handleTimeUp() {
+    if (state.submitted) return;
+    clearQuizAutoTimer();
+    var q = state.quizQs[state.idx];
+    var userVal;
+    if (q.type === "qcm") {
+      userVal = state.selectedChoice;
+    } else {
+      var inp = document.getElementById("quiz-input");
+      userVal = inp ? inp.value : "";
+    }
+    var hasAnswer = userVal !== null && userVal !== undefined && String(userVal).trim() !== "";
+    var ok = hasAnswer && isCorrectAnswer(q, userVal);
+    state.wasCorrect = ok;
+    if (ok) state.score += 1;
+    state.submitted = true;
+    state.timedOut = true;
+    render();
+    if (ok) playCorrectSound();
+    else playTimeUpSound();
+    scheduleAutoNext();
+  }
+
+  function playTimeUpSound() {
+    playTone([392, 311.13], { noteDur: 0.22, type: "sawtooth", gain: 0.15 });
+    speak("Temps écoulé !");
+  }
+
+  // Retourne une Promise qui se résout une fois state.data prêt.
+  // Si l'appareil n'a pas encore de données locales, on essaie d'abord de
+  // récupérer le fichier "questions.json" publié par l'administrateur
+  // (via export + upload sur GitHub), pour que tout le monde parte des
+  // mêmes questions.
+  function loadData() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        state.data = JSON.parse(raw);
+        migrateData();
+        return Promise.resolve();
+      }
+    } catch (e) {
+      console.error("Lecture du stockage impossible", e);
+    }
+    return fetchPublishedQuestions()
+      .then(function (published) {
+        state.data = published || seedData();
+        migrateData();
+        saveData();
+      })
+      .catch(function () {
+        state.data = seedData();
+        migrateData();
+        saveData();
+      });
+  }
+
+  function fetchPublishedQuestions() {
+    return fetch("./questions.json", { cache: "no-store" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("questions.json introuvable");
+        return res.json();
+      })
+      .catch(function () {
+        return null;
+      });
+  }
+
+  // Ajoute les nouveaux niveaux (ex: 6 à 10 pour Collège/Lycée) aux données
+  // déjà sauvegardées par un utilisateur, sans toucher aux questions existantes.
+  function migrateData() {
+    var changed = false;
+    if (!state.data) {
+      state.data = emptyData();
+      changed = true;
+    }
+    // Ancienne classe unique "Terminale" -> fusionnée dans "Terminale C"
+    // (conserve les questions déjà ajoutées avant la séparation en séries A/D/C)
+    if (state.data.terminale) {
+      if (!state.data.terminaleC) state.data.terminaleC = {};
+      Object.keys(state.data.terminale).forEach(function (lvl) {
+        var oldQs = state.data.terminale[lvl] || [];
+        var existing = state.data.terminaleC[lvl] || [];
+        state.data.terminaleC[lvl] = existing.concat(oldQs);
+      });
+      delete state.data.terminale;
+      changed = true;
+    }
+    CLASSES.forEach(function (c) {
+      if (!state.data[c.id]) {
+        state.data[c.id] = {};
+        changed = true;
+      }
+      getLevelsForClass(c.id).forEach(function (l) {
+        if (!state.data[c.id][l]) {
+          state.data[c.id][l] = [];
+          changed = true;
+        }
+      });
+    });
+    if (changed) saveData();
+  }
+
+  function saveData() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data));
+    } catch (e) {
+      console.error("Sauvegarde impossible", e);
+    }
+  }
+
+  var SOUND_KEY = "craie-maths-sound";
+  function loadSoundPref() {
+    try {
+      var v = localStorage.getItem(SOUND_KEY);
+      state.soundOn = v === null ? true : v === "1";
+    } catch (e) {
+      state.soundOn = true;
+    }
+  }
+  function toggleSound() {
+    state.soundOn = !state.soundOn;
+    try {
+      localStorage.setItem(SOUND_KEY, state.soundOn ? "1" : "0");
+    } catch (e) {}
+    var btn = document.getElementById("sound-toggle");
+    if (btn) btn.textContent = state.soundOn ? "🔊" : "🔇";
+    if (!state.soundOn) {
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      stopBackgroundMusic();
+    } else if (state.screen === "play-quiz") {
+      startBackgroundMusic();
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Classement (scores par classe et par niveau)
+  // ---------------------------------------------------------------------
+  var SCORES_KEY = "craie-maths-scores";
+  var PLAYER_NAME_KEY = "craie-maths-player-name";
+  var MAX_SCORES_PER_LEVEL = 10;
+
+  function getPlayerName() {
+    try {
+      return localStorage.getItem(PLAYER_NAME_KEY) || "";
+    } catch (e) {
+      return "";
+    }
+  }
+  function savePlayerName(v) {
+    try {
+      localStorage.setItem(PLAYER_NAME_KEY, v);
+    } catch (e) {}
+  }
+  // Nom réellement utilisé pour identifier le joueur (par défaut "Joueur"
+  // si le champ prénom est laissé vide), et sa version normalisée pour
+  // comparer sans se soucier des majuscules/espaces.
+  function effectivePlayerName() {
+    var n = (getPlayerName() || "").trim();
+    return n || "Joueur";
+  }
+  function normalizeName(n) {
+    return (n || "").trim().toLowerCase();
+  }
+
+  function loadScores() {
+    try {
+      var raw = localStorage.getItem(SCORES_KEY);
+      state.scores = raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      state.scores = {};
+    }
+  }
+  function saveScores() {
+    try {
+      localStorage.setItem(SCORES_KEY, JSON.stringify(state.scores));
+    } catch (e) {}
+  }
+
+  function recordScore(classId, level, name, score, total) {
+    if (!state.scores[classId]) state.scores[classId] = {};
+    if (!state.scores[classId][level]) state.scores[classId][level] = [];
+    state.scores[classId][level].push({
+      name: (name || "Joueur").trim() || "Joueur",
+      score: score,
+      total: total,
+      date: new Date().toISOString(),
+    });
+    state.scores[classId][level].sort(function (a, b) {
+      var pa = a.total ? a.score / a.total : 0;
+      var pb = b.total ? b.score / b.total : 0;
+      if (pb !== pa) return pb - pa;
+      return new Date(a.date) - new Date(b.date);
+    });
+    state.scores[classId][level] = state.scores[classId][level].slice(0, MAX_SCORES_PER_LEVEL);
+    saveScores();
+  }
+
+  // Un niveau est débloqué pour CE joueur (prénom) si c'est le niveau 1, ou
+  // si lui (ou elle) a déjà terminé le niveau précédent avec 100% de bonnes
+  // réponses au moins une fois. Chaque prénom débloque ses propres niveaux.
+  function isLevelUnlocked(classId, level) {
+    if (level <= 1) return true;
+    var player = normalizeName(effectivePlayerName());
+    var prevEntries = (state.scores[classId] && state.scores[classId][level - 1]) || [];
+    return prevEntries.some(function (e) {
+      return e.total > 0 && e.score === e.total && normalizeName(e.name) === player;
+    });
+  }
+
+  var board = null;
+
+  function render() {
+    if (!board) board = document.getElementById("board");
+    var html = "";
+    switch (state.screen) {
+      case "home":
+        html = renderHome();
+        break;
+      case "play-class":
+        html = renderClassPicker("play", "Choisis ta classe pour jouer");
+        break;
+      case "play-level":
+        html = renderLevelPicker("play");
+        break;
+      case "play-empty":
+        html = renderPlayEmpty();
+        break;
+      case "play-quiz":
+        html = renderQuiz();
+        break;
+      case "play-result":
+        html = renderResult();
+        break;
+      case "play-leaderboard":
+        html = renderLeaderboard();
+        break;
+      case "admin-login":
+        html = renderAdminLogin();
+        break;
+      case "admin-class":
+        html = renderClassPicker("admin", "Choisis la classe à compléter");
+        break;
+      case "admin-level":
+        html = renderLevelPicker("admin");
+        break;
+      case "admin-manage":
+        html = renderAdminManage();
+        break;
+    }
+    board.innerHTML = html;
+    attachListeners();
+  }
+
+  // ---------------------------------------------------------------------
+  // Screen renderers
+  // ---------------------------------------------------------------------
+  function renderHome() {
+    return (
+      '<div class="home-wrap">' +
+      '<p class="chalk-text" style="font-size:18px;margin-bottom:20px;">' +
+      "Un tableau noir, de la craie, et tes propres exercices de maths — de la première année " +
+      "du primaire jusqu'à la Terminale." +
+      "</p>" +
+      '<input class="choice-input" id="player-name" style="max-width:280px;margin:0 auto 24px;display:block;text-align:center;" ' +
+      'placeholder="Ton prénom (pour le classement)" value="' + escapeHtml(getPlayerName()) + '" />' +
+      '<div class="home-buttons">' +
+      '<button class="big-chalk-btn" data-action="go-play-class">🎓 <span>Jouer</span></button>' +
+      '<button class="big-chalk-btn blue" data-action="go-admin-login">🔒 <span>Ajouter des questions</span></button>' +
+      "</div>" +
+      "</div>"
+    );
+  }
+
+  function renderAdminLogin() {
+    return (
+      '<div class="top-bar">' +
+      '<button class="back-btn" data-action="go-home">← Retour</button>' +
+      '<div class="top-bar-label">Espace administrateur</div>' +
+      "</div>" +
+      '<div class="form-card" style="max-width:360px;margin:10px auto;">' +
+      '<p class="chalk-text" style="margin-top:0;">Entre le mot de passe pour ajouter ou modifier des questions.</p>' +
+      '<input class="choice-input" id="admin-password" type="password" placeholder="Mot de passe" autocomplete="current-password" />' +
+      (state.loginError ? '<div class="form-error">' + escapeHtml(state.loginError) + "</div>" : "") +
+      '<button class="chalk-btn" style="margin-top:14px;width:100%;justify-content:center;" data-action="admin-login-submit">Entrer</button>' +
+      "</div>"
+    );
+  }
+
+  function renderClassPicker(mode, subtitle) {
+    var html =
+      '<div class="top-bar">' +
+      '<button class="back-btn" data-action="go-home">← Retour</button>' +
+      '<div class="top-bar-label">' +
+      subtitle +
+      "</div>" +
+      "</div>";
+    if (mode === "admin") {
+      html +=
+        '<div class="form-card" style="margin-bottom:18px;">' +
+        '<p class="chalk-text-muted" style="margin-top:0;">Pour que <b style="color:#f5f3e7;">tout le monde</b> voie tes questions ' +
+        "(pas seulement cet appareil), exporte-les puis mets à jour le fichier " +
+        '<code>questions.json</code> sur GitHub.</p>' +
+        '<button class="chalk-btn-ghost" data-action="export-questions">📤 Exporter les questions (questions.json)</button>' +
+        "</div>";
+    }
+    GROUPS.forEach(function (g) {
+      html += '<div style="margin-bottom:22px;">';
+      html += '<div class="group-label">— ' + g + " —</div>";
+      html += '<div class="class-grid">';
+      CLASSES.filter(function (c) {
+        return c.group === g;
+      }).forEach(function (c) {
+        html +=
+          '<button class="class-card" data-action="pick-class" data-mode="' +
+          mode +
+          '" data-class="' +
+          c.id +
+          '">' +
+          c.label +
+          "</button>";
+      });
+      html += "</div></div>";
+    });
+    return html;
+  }
+
+  function renderLevelPicker(mode) {
+    var html =
+      '<div class="top-bar">' +
+      '<button class="back-btn" data-action="' +
+      (mode === "play" ? "go-play-class" : "go-admin-class") +
+      '">← Retour</button>' +
+      '<div class="top-bar-label">' +
+      classLabel(state.selClass) +
+      " · Choisis un niveau</div>" +
+      "</div>";
+    if (mode === "play") {
+      html +=
+        '<p class="chalk-text-muted" style="margin-top:-6px;margin-bottom:14px;">⏱ ' +
+        getTimeForClass(state.selClass) +
+        " secondes par question pour cette classe</p>";
+    }
+    html += '<div class="level-grid">';
+    getLevelsForClass(state.selClass).forEach(function (l) {
+      var count = state.data[state.selClass][l].length;
+      var locked = mode === "play" && !isLevelUnlocked(state.selClass, l);
+      var stars = "";
+      var starCount = Math.min(l, 5);
+      for (var i = 0; i < starCount; i++) stars += '<span class="icon-star">★</span>';
+      html +=
+        '<button class="level-card' +
+        (locked ? " level-locked" : "") +
+        '" data-action="' +
+        (locked ? "level-locked-info" : "pick-level") +
+        '" data-mode="' +
+        mode +
+        '" data-level="' +
+        l +
+        '">' +
+        (locked
+          ? '<div class="level-lock-icon">🔒</div>'
+          : '<div class="level-stars">' + stars + "</div>") +
+        '<div class="level-title">Niveau ' +
+        l +
+        "</div>" +
+        (locked
+          ? '<div class="level-warn">réussis le niveau ' + (l - 1) + " à 100%</div>"
+          : '<div class="level-count">' +
+            count +
+            "/" +
+            MAX_Q +
+            " questions</div>" +
+            (mode === "play" && count === 0
+              ? '<div class="level-warn">vide — ajoute des questions</div>'
+              : "")) +
+        "</button>";
+    });
+    html += "</div>";
+    return html;
+  }
+
+  function renderPlayEmpty() {
+    return (
+      '<div class="center">' +
+      '<p class="chalk-text">Aucune question pour ' +
+      classLabel(state.selClass) +
+      " · Niveau " +
+      state.selLevel +
+      ".</p>" +
+      '<button class="chalk-btn" data-action="go-admin-manage-from-empty">✏️ Ajouter des questions ici</button>' +
+      '<div style="height:10px"></div>' +
+      '<button class="chalk-btn-ghost" data-action="go-play-level">← Choisir un autre niveau</button>' +
+      "</div>"
+    );
+  }
+
+  function renderQuiz() {
+    var q = state.quizQs[state.idx];
+    if (!q) return "";
+    var html =
+      '<div class="quiz-meta"><span>Question ' +
+      (state.idx + 1) +
+      "/" +
+      state.quizQs.length +
+      '</span><span>Score : ' +
+      state.score +
+      "</span></div>";
+    html +=
+      '<div class="timer-wrap">' +
+      '<div class="timer-bar"><div class="timer-bar-fill" id="timer-bar-fill" style="width:100%;"></div></div>' +
+      '<span class="timer-value">⏱ <span id="timer-value">' + state.timeLeft + '</span>s</span>' +
+      "</div>";
+    html += '<div class="question-card fade-in">';
+    html += '<div class="question-text">' + escapeHtml(q.text) + "</div>";
+
+    if (q.type === "qcm") {
+      var order = state.choiceOrderCache[q.id] || q.choices;
+      html += '<div class="choice-list">';
+      order.forEach(function (c) {
+        var cls = "choice-btn";
+        if (state.submitted) {
+          if (c === q.answer) cls += " correct";
+          else if (c === state.selectedChoice) cls += " wrong";
+        } else if (c === state.selectedChoice) {
+          cls += " selected";
+        }
+        html +=
+          '<button class="' +
+          cls +
+          '" data-action="select-choice" data-value="' +
+          escapeHtml(c) +
+          '"' +
+          (state.submitted ? " disabled" : "") +
+          ">" +
+          escapeHtml(c) +
+          "</button>";
+      });
+      html += "</div>";
+      if (!state.submitted) {
+        html +=
+          '<p class="chalk-text-muted" style="font-size:12px;margin:8px 0 0;">Tu peux changer d\'avis, la réponse est corrigée à la fin du chrono' +
+          (state.selectedChoice
+            ? ' — ou <button class="link-btn" data-action="submit-answer">valide maintenant</button>'
+            : "") +
+          ".</p>";
+      }
+    } else {
+      html +=
+        '<input class="text-input" id="quiz-input" type="text" placeholder="Ta réponse…"' +
+        (state.submitted ? " disabled" : "") +
+        " />";
+      if (!state.submitted) {
+        html += '<p class="chalk-text-muted" style="font-size:12px;margin:8px 0 0;">La réponse est corrigée à la fin du chrono (ou appuie sur Entrée pour valider maintenant).</p>';
+      }
+    }
+
+    if (state.submitted) {
+      if (state.wasCorrect) {
+        html += '<div class="feedback ok">✓ Bonne réponse !</div>';
+      } else if (state.timedOut) {
+        html += '<div class="feedback ko">⏰ Temps écoulé ! La réponse était : ' + escapeHtml(q.answer) + "</div>";
+      } else {
+        html += '<div class="feedback ko">✕ Pas tout à fait — la réponse était : ' + escapeHtml(q.answer) + "</div>";
+      }
+    }
+
+    html += '<div style="margin-top:20px;">';
+    if (state.submitted) {
+      html +=
+        '<button class="chalk-btn" data-action="next-question">' +
+        (state.idx + 1 >= state.quizQs.length ? "Voir mon score" : "Question suivante") +
+        "</button>";
+    }
+    html += "</div></div>";
+    return html;
+  }
+
+  function renderResult() {
+    var total = state.quizQs.length;
+    var pct = total > 0 ? Math.round((state.score / total) * 100) : 0;
+    var stars = pct >= 80 ? 3 : pct >= 50 ? 2 : 1;
+    var starsHtml = "";
+    for (var i = 1; i <= 3; i++) {
+      starsHtml += '<span style="font-size:34px;color:#f4d35e;">' + (i <= stars ? "★" : "☆") + "</span>";
+    }
+    return (
+      '<div class="center">' +
+      '<div class="group-label">' +
+      classLabel(state.selClass) +
+      " · Niveau " +
+      state.selLevel +
+      "</div>" +
+      '<div style="display:flex;gap:6px;margin:10px 0 18px;">' +
+      starsHtml +
+      "</div>" +
+      '<div class="score-big">' +
+      state.score +
+      " / " +
+      total +
+      "</div>" +
+      '<p class="chalk-text">' +
+      pct +
+      "% de bonnes réponses</p>" +
+      '<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:20px;">' +
+      '<button class="chalk-btn" data-action="replay-level">Rejouer ce niveau</button>' +
+      '<button class="chalk-btn-ghost" data-action="go-leaderboard">🏆 Classement</button>' +
+      '<button class="chalk-btn-ghost" data-action="go-play-level">Changer de niveau</button>' +
+      '<button class="chalk-btn-ghost" data-action="go-home">Accueil</button>' +
+      "</div></div>"
+    );
+  }
+
+  function renderLeaderboard() {
+    var entries = (state.scores[state.selClass] && state.scores[state.selClass][state.selLevel]) || [];
+    var html =
+      '<div class="top-bar">' +
+      '<button class="back-btn" data-action="back-to-result">← Retour</button>' +
+      '<div class="top-bar-label">🏆 ' +
+      classLabel(state.selClass) +
+      " · Niveau " +
+      state.selLevel +
+      "</div>" +
+      "</div>";
+    if (entries.length === 0) {
+      html += '<p class="chalk-text-muted">Aucun score enregistré pour l\'instant sur ce niveau.</p>';
+    } else {
+      html += '<div class="form-card">';
+      entries.forEach(function (e, i) {
+        var pct = e.total ? Math.round((e.score / e.total) * 100) : 0;
+        var medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "#" + (i + 1);
+        html +=
+          '<div class="q-row">' +
+          '<div style="flex:1;">' +
+          '<span class="q-badge">' +
+          medal +
+          "</span>" +
+          '<span class="q-row-text">' +
+          escapeHtml(e.name) +
+          "</span>" +
+          '<div class="q-row-answer">' +
+          e.score +
+          "/" +
+          e.total +
+          " (" +
+          pct +
+          "%)</div>" +
+          "</div>" +
+          "</div>";
+      });
+      html += "</div>";
+    }
+    return html;
+  }
+
+  function renderAdminManage() {
+    var questions = state.data[state.selClass][state.selLevel];
+    var full = questions.length >= MAX_Q;
+    var html =
+      '<div class="top-bar">' +
+      '<button class="back-btn" data-action="go-admin-level">← Retour</button>' +
+      '<div class="top-bar-label">' +
+      classLabel(state.selClass) +
+      " · Niveau " +
+      state.selLevel +
+      " (" +
+      questions.length +
+      "/" +
+      MAX_Q +
+      ")</div>" +
+      "</div>";
+
+    if (!full) {
+      html += '<div class="form-card">';
+      html += '<div class="type-toggle">';
+      html +=
+        '<button class="type-btn ' +
+        (state.qType === "qcm" ? "active" : "") +
+        '" data-action="set-qtype" data-value="qcm">QCM</button>';
+      html +=
+        '<button class="type-btn ' +
+        (state.qType === "libre" ? "active" : "") +
+        '" data-action="set-qtype" data-value="libre">Réponse libre</button>';
+      html += "</div>";
+
+      html += '<textarea class="textarea-field" id="q-text" rows="2" placeholder="Écris l\'énoncé de la question…"></textarea>';
+
+      if (state.qType === "qcm") {
+        html += '<div style="margin-top:10px;">';
+        for (var i = 0; i < 4; i++) {
+          html +=
+            '<div class="choice-row">' +
+            '<input type="radio" name="correct" value="' +
+            i +
+            '"' +
+            (state.correctIdx === i ? " checked" : "") +
+            ' data-action="set-correct-idx" />' +
+            '<input class="choice-input" id="choice-input-' +
+            i +
+            '" placeholder="Proposition ' +
+            (i + 1) +
+            (state.correctIdx === i ? " (bonne réponse)" : "") +
+            '" />' +
+            "</div>";
+        }
+        html += "</div>";
+      } else {
+        html += '<input class="choice-input" id="libre-answer" style="margin-top:10px;" placeholder="Bonne réponse" />';
+      }
+
+      if (state.formError) {
+        html += '<div class="form-error">' + escapeHtml(state.formError) + "</div>";
+      }
+
+      html += '<button class="chalk-btn" style="margin-top:14px;" data-action="add-question">➕ Ajouter la question</button>';
+      html += "</div>";
+    } else {
+      html +=
+        '<div class="form-card" style="text-align:center;">Niveau complet — 20/20 questions. Supprime-en une pour en ajouter une autre.</div>';
+    }
+
+    html += '<div style="margin-top:22px;">';
+    html += '<div class="group-label">Questions de ce niveau</div>';
+    if (questions.length === 0) {
+      html += '<p class="chalk-text-muted">Aucune question pour l\'instant.</p>';
+    }
+    questions.forEach(function (q, i) {
+      html +=
+        '<div class="q-row">' +
+        '<div style="flex:1;">' +
+        '<span class="q-badge">' +
+        (q.type === "qcm" ? "QCM" : "Libre") +
+        "</span>" +
+        '<span class="q-row-text">' +
+        (i + 1) +
+        ". " +
+        escapeHtml(q.text) +
+        "</span>" +
+        '<div class="q-row-answer">Réponse : ' +
+        escapeHtml(q.answer) +
+        "</div>" +
+        "</div>" +
+        '<button class="trash-btn" data-action="delete-question" data-id="' +
+        q.id +
+        '">🗑</button>' +
+        "</div>";
+    });
+    html += "</div>";
+    return html;
+  }
+
+  // ---------------------------------------------------------------------
+  // Actions
+  // ---------------------------------------------------------------------
+  function goHome() {
+    state.screen = "home";
+    state.selClass = null;
+    state.selLevel = null;
+    render();
+  }
+
+  function submitAdminLogin() {
+    var el = document.getElementById("admin-password");
+    var val = el ? el.value : "";
+    if (val === ADMIN_PASSWORD) {
+      state.isAdminAuthed = true;
+      state.loginError = "";
+      state.screen = state.pendingAdminScreen || "admin-class";
+    } else {
+      state.loginError = "Mot de passe incorrect.";
+    }
+    render();
+  }
+
+  function pickLevelForPlay(lvl) {
+    if (!isLevelUnlocked(state.selClass, lvl)) return;
+    stopBackgroundMusic();
+    clearQuestionTimer();
+    clearQuizAutoTimer();
+    clearAutoNextTimer();
+    var qs = state.data[state.selClass][lvl];
+    if (!qs || qs.length === 0) {
+      state.selLevel = lvl;
+      state.screen = "play-empty";
+      render();
+      return;
+    }
+    var chosen = shuffle(qs).slice(0, MAX_Q);
+    state.quizQs = chosen;
+    state.selLevel = lvl;
+    state.idx = 0;
+    state.score = 0;
+    state.selectedChoice = null;
+    state.submitted = false;
+    var cache = {};
+    chosen.forEach(function (q) {
+      if (q.type === "qcm") cache[q.id] = shuffle(q.choices);
+    });
+    state.choiceOrderCache = cache;
+    state.screen = "play-quiz";
+    render();
+    startBackgroundMusic();
+    startQuestionTimer();
+  }
+
+  function submitAnswer() {
+    if (state.submitted) return;
+    clearQuizAutoTimer();
+    var q = state.quizQs[state.idx];
+    var userVal;
+    if (q.type === "qcm") {
+      userVal = state.selectedChoice;
+    } else {
+      var inp = document.getElementById("quiz-input");
+      userVal = inp ? inp.value : "";
+    }
+    if (userVal === null || userVal === undefined || String(userVal).trim() === "") return;
+    clearQuestionTimer();
+    var ok = isCorrectAnswer(q, userVal);
+    state.wasCorrect = ok;
+    state.timedOut = false;
+    if (ok) state.score += 1;
+    state.submitted = true;
+    render();
+    if (ok) playCorrectSound();
+    else playWrongSound();
+    scheduleAutoNext();
+  }
+
+  function nextQuestion() {
+    clearQuizAutoTimer();
+    clearAutoNextTimer();
+    if (state.idx + 1 >= state.quizQs.length) {
+      stopBackgroundMusic();
+      clearQuestionTimer();
+      recordScore(state.selClass, state.selLevel, getPlayerName(), state.score, state.quizQs.length);
+      state.screen = "play-result";
+      render();
+      if (state.score === state.quizQs.length && state.quizQs.length > 0) {
+        setTimeout(playApplause, 300);
+      }
+      return;
+    }
+    state.idx += 1;
+    state.selectedChoice = null;
+    state.submitted = false;
+    render();
+    startQuestionTimer();
+  }
+
+  function addQuestion() {
+    state.formError = "";
+    var qTextEl = document.getElementById("q-text");
+    var qText = qTextEl ? qTextEl.value.trim() : "";
+    if (!qText) {
+      state.formError = "Écris d'abord l'énoncé de la question.";
+      render();
+      return;
+    }
+    var newQ;
+    if (state.qType === "qcm") {
+      var choiceVals = [];
+      for (var i = 0; i < 4; i++) {
+        var el = document.getElementById("choice-input-" + i);
+        choiceVals.push(el ? el.value.trim() : "");
+      }
+      if (choiceVals.some(function (c) { return !c; })) {
+        state.formError = "Remplis les 4 propositions.";
+        render();
+        return;
+      }
+      newQ = {
+        id: "q_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+        type: "qcm",
+        text: qText,
+        choices: choiceVals,
+        answer: choiceVals[state.correctIdx],
+      };
+    } else {
+      var libreEl = document.getElementById("libre-answer");
+      var libreAnswer = libreEl ? libreEl.value.trim() : "";
+      if (!libreAnswer) {
+        state.formError = "Indique la bonne réponse.";
+        render();
+        return;
+      }
+      newQ = {
+        id: "q_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+        type: "libre",
+        text: qText,
+        answer: libreAnswer,
+      };
+    }
+    state.data[state.selClass][state.selLevel].push(newQ);
+    saveData();
+    state.correctIdx = 0;
+    state.formError = "";
+    render();
+  }
+
+  function deleteQuestion(id) {
+    var arr = state.data[state.selClass][state.selLevel];
+    state.data[state.selClass][state.selLevel] = arr.filter(function (q) {
+      return q.id !== id;
+    });
+    saveData();
+    render();
+  }
+
+  function exportQuestions() {
+    try {
+      var json = JSON.stringify(state.data, null, 2);
+      var blob = new Blob([json], { type: "application/json" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "questions.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () {
+        URL.revokeObjectURL(url);
+      }, 1000);
+    } catch (e) {
+      console.error("Export impossible", e);
+      alert("L'export a échoué sur cet appareil.");
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Event delegation
+  // ---------------------------------------------------------------------
+  function attachListeners() {
+    board.querySelectorAll("[data-action]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        var action = el.getAttribute("data-action");
+        switch (action) {
+          case "go-home":
+            goHome();
+            break;
+          case "go-play-class":
+            state.screen = "play-class";
+            render();
+            break;
+          case "go-admin-class":
+            state.screen = "admin-class";
+            render();
+            break;
+          case "pick-class":
+            state.selClass = el.getAttribute("data-class");
+            state.screen = el.getAttribute("data-mode") === "play" ? "play-level" : "admin-level";
+            render();
+            break;
+          case "pick-level":
+            var lvl = parseInt(el.getAttribute("data-level"), 10);
+            if (el.getAttribute("data-mode") === "play") {
+              pickLevelForPlay(lvl);
+            } else {
+              state.selLevel = lvl;
+              state.qType = "qcm";
+              state.correctIdx = 0;
+              state.formError = "";
+              state.screen = "admin-manage";
+              render();
+            }
+            break;
+          case "level-locked-info":
+            var lockedLvl = parseInt(el.getAttribute("data-level"), 10);
+            alert(
+              "Niveau verrouillé 🔒\n\n" +
+                effectivePlayerName() +
+                " doit terminer le niveau " +
+                (lockedLvl - 1) +
+                " avec 100% de bonnes réponses pour débloquer le niveau " +
+                lockedLvl +
+                ".\n\n(Le déblocage est propre à chaque prénom saisi sur l'accueil.)"
+            );
+            break;
+          case "go-play-level":
+            state.screen = "play-level";
+            render();
+            break;
+          case "go-admin-level":
+            state.screen = "admin-level";
+            render();
+            break;
+          case "go-admin-manage-from-empty":
+            state.qType = "qcm";
+            state.correctIdx = 0;
+            state.formError = "";
+            state.pendingAdminScreen = "admin-manage";
+            state.screen = state.isAdminAuthed ? "admin-manage" : "admin-login";
+            render();
+            break;
+          case "go-admin-login":
+            state.loginError = "";
+            state.pendingAdminScreen = "admin-class";
+            state.screen = "admin-login";
+            render();
+            break;
+          case "admin-login-submit":
+            submitAdminLogin();
+            break;
+          case "select-choice":
+            if (state.submitted) break;
+            state.selectedChoice = el.getAttribute("data-value");
+            render();
+            break;
+          case "submit-answer":
+            submitAnswer();
+            break;
+          case "next-question":
+            nextQuestion();
+            break;
+          case "replay-level":
+            pickLevelForPlay(state.selLevel);
+            break;
+          case "go-leaderboard":
+            state.screen = "play-leaderboard";
+            render();
+            break;
+          case "back-to-result":
+            state.screen = "play-result";
+            render();
+            break;
+          case "set-qtype":
+            state.qType = el.getAttribute("data-value");
+            state.formError = "";
+            render();
+            break;
+          case "add-question":
+            addQuestion();
+            break;
+          case "delete-question":
+            deleteQuestion(el.getAttribute("data-id"));
+            break;
+          case "export-questions":
+            exportQuestions();
+            break;
+        }
+      });
+    });
+
+    board.querySelectorAll('[data-action="set-correct-idx"]').forEach(function (el) {
+      el.addEventListener("change", function () {
+        state.correctIdx = parseInt(el.value, 10);
+        render();
+      });
+    });
+
+    // La réponse libre reste modifiable librement pendant tout le chrono ;
+    // elle n'est corrigée qu'à la fin du temps imparti (ou si le joueur
+    // appuie sur Entrée pour valider volontairement avant la fin).
+    var quizInput = document.getElementById("quiz-input");
+    if (quizInput) {
+      quizInput.focus();
+      quizInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !state.submitted) {
+          submitAnswer();
+        }
+      });
+    }
+
+    // Enter key submits the admin password
+    var pwInput = document.getElementById("admin-password");
+    if (pwInput) {
+      pwInput.focus();
+      pwInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") submitAdminLogin();
+      });
+    }
+
+    // Sauvegarde le prénom du joueur au fil de la frappe (écran d'accueil)
+    var nameInput = document.getElementById("player-name");
+    if (nameInput) {
+      nameInput.addEventListener("input", function () {
+        savePlayerName(nameInput.value);
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Boot
+  // ---------------------------------------------------------------------
+  document.addEventListener("DOMContentLoaded", function () {
+    loadSoundPref();
+    loadScores();
+    render();
+    loadData().then(function () {
+      render();
+    });
+
+    var soundBtn = document.getElementById("sound-toggle");
+    if (soundBtn) {
+      soundBtn.textContent = state.soundOn ? "🔊" : "🔇";
+      soundBtn.addEventListener("click", toggleSound);
+    }
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("sw.js").catch(function (err) {
+          console.error("Service worker non enregistré", err);
+        });
+      });
+    }
+  });
+})();
+
+</script>
+</body>
+</html>
